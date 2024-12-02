@@ -2,4 +2,5 @@
 resolver = "2"
 members = [
     "day01_hysteria",
+    "day02_rednosed",
 ]
