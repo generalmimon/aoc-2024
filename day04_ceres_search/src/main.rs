@@ -3,11 +3,11 @@ use std::{fmt::Debug, i32, io::{self, BufRead}, ops::{Index, IndexMut}};
 
 fn main() {
     let input = read_input_from_stdin();
-    let res = solve(&input);
+    let res = solve_part1(&input);
     println!("{res}")
 }
 
-fn solve(table: &Table) -> usize {
+fn solve_part1(table: &Table) -> usize {
     let mut num_occurrences = 0;
     const NEEDLE: &[u8] = b"XMAS";
     let dirs = vec![
@@ -21,20 +21,11 @@ fn solve(table: &Table) -> usize {
         (-1, 1),
     ];
     for first_pos in table.all_positions().filter(|&pos| table[pos] == NEEDLE[0]) {
-        'outer: for dir in &dirs {
+        'outer: for &dir in &dirs {
             for i in 1..NEEDLE.len() {
-                let r = i32::try_from(first_pos.r).unwrap() + i32::try_from(i).unwrap() * dir.0;
-                let c = i32::try_from(first_pos.c).unwrap() + i32::try_from(i).unwrap() * dir.1;
-                let Ok(r_usize) = r.try_into() else {
+                let Some(new_pos) = table.move_from_pos(first_pos, dir, isize::try_from(i).unwrap()) else {
                     continue 'outer;
                 };
-                let Ok(c_usize) = c.try_into() else {
-                    continue 'outer;
-                };
-                let new_pos = Pos { r: r_usize, c: c_usize };
-                if !table.contains_pos(new_pos) {
-                    continue 'outer;
-                }
                 if table[new_pos] != NEEDLE[i] {
                     continue 'outer;
                 }
@@ -67,6 +58,17 @@ impl Table {
     fn all_positions(&self) -> impl Iterator<Item = Pos> + use<'_> {
         // https://stackoverflow.com/q/53722749/12940655
         (0..self.rows).flat_map(|r| (0..self.cols).map(move |c| Pos { r, c }))
+    }
+
+    fn move_from_pos(&self, pos: Pos, dir: (isize, isize), mult: isize) -> Option<Pos> {
+        let r: isize = isize::try_from(pos.r).ok()? + dir.0 * mult;
+        let c: isize = isize::try_from(pos.c).ok()? + dir.1 * mult;
+        let new_pos = Pos { r: r.try_into().ok()?, c: c.try_into().ok()? };
+        if self.contains_pos(new_pos) {
+            Some(new_pos)
+        } else {
+            None
+        }
     }
 
     fn contains_pos(&self, pos: Pos) -> bool {
