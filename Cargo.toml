@@ -4,4 +4,5 @@ members = [
     "day01_hysteria",
     "day02_rednosed",
     "day03_mul",
+    "day04_ceres_search",
 ]
