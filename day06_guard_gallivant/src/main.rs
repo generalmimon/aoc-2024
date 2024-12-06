@@ -3,7 +3,35 @@ use std::{fmt::Debug, io::{self, BufRead}, ops::{Index, IndexMut}};
 
 fn main() {
     let input = read_input_from_stdin();
-    println!("{input:?}");
+    let res = solve_part1(input);
+    println!("{res}");
+}
+
+fn solve_part1(mut table: Table) -> usize {
+    let mut guard_pos = table.all_positions()
+        .find(|&pos| table[pos] == b'^')
+        .unwrap();
+    let mut guard_dir = (-1, 0);
+    let mut num_distinct_positions = 0;
+    loop {
+        if table[guard_pos] != b'X' {
+            num_distinct_positions += 1;
+        }
+        table[guard_pos] = b'X';
+        let Some(next_pos) = table.move_from_pos(guard_pos, guard_dir, 1) else {
+            break;
+        };
+        if table[next_pos] == b'#' {
+            guard_dir = dir_right_hand(guard_dir);
+            continue;
+        }
+        guard_pos = next_pos;
+    }
+    num_distinct_positions
+}
+
+fn dir_right_hand(dir: (isize, isize)) -> (isize, isize) {
+    (dir.1, -dir.0)
 }
 
 struct Table {
@@ -51,7 +79,7 @@ impl Debug for Table {
         write!(f, "Table ({} rows, {} columns)\n", self.rows, self.cols)?;
         write!(f, "{{\n")?;
         for row in self.cells.chunks_exact(self.cols) {
-            write!(f, "  {}\n", str::from_utf8(row).unwrap())?;
+            write!(f, "{}\n", str::from_utf8(row).unwrap())?;
         }
         write!(f, "}}\n")?;
         Ok(())
@@ -105,4 +133,15 @@ fn read_input_from_stdin() -> Table {
     }
 
     Table::new(cols, cells)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn right_hand() {
+        assert_eq!(dir_right_hand((0, 1)), (1, 0));
+        assert_eq!(dir_right_hand((1, 0)), (0, -1));
+    }
 }
