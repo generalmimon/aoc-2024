@@ -6,4 +6,5 @@ members = [
     "day03_mul",
     "day04_ceres_search",
     "day05_print_queue",
+    "day06_guard_gallivant",
 ]
