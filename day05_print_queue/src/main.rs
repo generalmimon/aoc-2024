@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Petr Pucil <petr.pucil@seznam.cz>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 use std::{cmp::Ordering, collections::{HashMap, HashSet}, io};
 
 fn main() {

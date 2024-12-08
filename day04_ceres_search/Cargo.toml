@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Petr Pucil <petr.pucil@seznam.cz>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 [package]
 name = "day04_ceres_search"
 version = "0.1.0"
