@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Petr Pucil <petr.pucil@seznam.cz>
+//
+// SPDX-License-Identifier: MIT
+
 use core::str;
 use std::{fmt::Debug, io::BufRead, ops::{Index, IndexMut}};
 
