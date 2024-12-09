@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2024 Petr Pucil <petr.pucil@seznam.cz>
+#
+# SPDX-License-Identifier: MIT
+
+[package]
+name = "day08_resonant_collinearity"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
