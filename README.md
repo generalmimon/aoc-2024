@@ -1,7 +1,7 @@
 <!--
 SPDX-FileCopyrightText: 2024 Petr Pucil <petr.pucil@seznam.cz>
 
-SPDX-License-Identifier: GPL-3.0-or-later
+SPDX-License-Identifier: MIT
 -->
 
 # Advent of Code 2024
