@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: MIT
 
-use std::io::{self, BufRead};
+use std::io;
 
 use utils::Table;
 
 fn main() {
-    let input = read_input_from_stdin();
+    let input = Table::from_reader(io::stdin().lock());
     let res = solve_part2(&input);
     println!("{res}")
 }
@@ -65,30 +65,4 @@ fn solve_part2(table: &Table) -> usize {
         }
     }
     num_occurrences
-}
-
-fn read_input_from_stdin() -> Table {
-    let mut cells = vec![];
-    let mut stdin = io::stdin().lock();
-    let mut line = vec![];
-    stdin.read_until(b'\n', &mut line).unwrap();
-    if line.last().map_or(false, |&x| x == b'\n') {
-        line.pop();
-    }
-    let cols = line.len();
-    cells.append(&mut line);
-
-    loop {
-        stdin.read_until(b'\n', &mut line).unwrap();
-        if line.is_empty() {
-            break;
-        }
-        if line.last().map_or(false, |&x| x == b'\n') {
-            line.pop();
-        }
-        assert_eq!(line.len(), cols);
-        cells.append(&mut line);
-    }
-
-    Table::new(cols, cells)
 }

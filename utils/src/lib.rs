@@ -1,5 +1,5 @@
 use core::str;
-use std::{fmt::Debug, ops::{Index, IndexMut}};
+use std::{fmt::Debug, io::BufRead, ops::{Index, IndexMut}};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 pub struct Pos {
@@ -25,6 +25,33 @@ impl Table {
             rows = 0;
         }
         Self { rows, cols, cells }
+    }
+
+    // https://rust-lang.github.io/api-guidelines/interoperability.html#generic-readerwriter-functions-take-r-read-and-w-write-by-value-c-rw-value
+    // https://users.rust-lang.org/t/api-taking-r-bufread-versus-taking-r-read/13821
+    pub fn from_reader<R: BufRead>(mut rdr: R) -> Self {
+        let mut cells = vec![];
+        let mut line = vec![];
+        rdr.read_until(b'\n', &mut line).unwrap();
+        if line.last().map_or(false, |&x| x == b'\n') {
+            line.pop();
+        }
+        let cols = line.len();
+        cells.append(&mut line);
+
+        loop {
+            rdr.read_until(b'\n', &mut line).unwrap();
+            if line.is_empty() {
+                break;
+            }
+            if line.last().map_or(false, |&x| x == b'\n') {
+                line.pop();
+            }
+            assert_eq!(line.len(), cols);
+            cells.append(&mut line);
+        }
+
+        Table::new(cols, cells)
     }
 
     pub fn all_positions(&self) -> impl Iterator<Item = Pos> + use<'_> {
