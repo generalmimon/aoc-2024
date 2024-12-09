@@ -71,8 +71,7 @@ impl Index<Pos> for Table {
 
 impl IndexMut<Pos> for Table {
     fn index_mut(&mut self, pos: Pos) -> &mut Self::Output {
-        assert!(pos.r < self.rows);
-        assert!(pos.c < self.cols);
+        assert!(self.contains_pos(pos));
         &mut self.cells[pos.r * self.cols + pos.c]
     }
 }
