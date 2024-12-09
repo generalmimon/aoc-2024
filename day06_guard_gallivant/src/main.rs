@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: MIT
 
-use core::str;
-use std::{collections::HashSet, fmt::Debug, io::{self, BufRead}, ops::{Index, IndexMut}};
+use std::{collections::HashSet, io::{self, BufRead}};
+
+use utils::{Pos, Table};
 
 fn main() {
     let input = read_input_from_stdin();
@@ -89,82 +90,6 @@ fn is_stuck_in_loop(table: &Table, mut guard_pos: Pos, mut guard_dir: (isize, is
 
 fn dir_right_hand(dir: (isize, isize)) -> (isize, isize) {
     (dir.1, -dir.0)
-}
-
-#[derive(Clone)]
-struct Table {
-    rows: usize,
-    cols: usize,
-    cells: Vec<u8>,
-}
-
-impl Table {
-    fn new(cols: usize, cells: Vec<u8>) -> Self {
-        let rows;
-        if cols != 0 {
-            assert_eq!(cells.len() % cols, 0);
-            rows = cells.len() / cols;
-        } else {
-            assert_eq!(cells.len(), 0);
-            rows = 0;
-        }
-        Self { rows, cols, cells }
-    }
-
-    fn all_positions(&self) -> impl Iterator<Item = Pos> + use<'_> {
-        // https://stackoverflow.com/q/53722749/12940655
-        (0..self.rows).flat_map(|r| (0..self.cols).map(move |c| Pos { r, c }))
-    }
-
-    fn move_from_pos(&self, pos: Pos, dir: (isize, isize), mult: isize) -> Option<Pos> {
-        let r: isize = isize::try_from(pos.r).ok()? + dir.0 * mult;
-        let c: isize = isize::try_from(pos.c).ok()? + dir.1 * mult;
-        let new_pos = Pos { r: r.try_into().ok()?, c: c.try_into().ok()? };
-        if self.contains_pos(new_pos) {
-            Some(new_pos)
-        } else {
-            None
-        }
-    }
-
-    fn contains_pos(&self, pos: Pos) -> bool {
-        pos.r < self.rows && pos.c < self.cols
-    }
-}
-
-impl Debug for Table {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Table ({} rows, {} columns)\n", self.rows, self.cols)?;
-        write!(f, "{{\n")?;
-        for row in self.cells.chunks_exact(self.cols) {
-            write!(f, "{}\n", str::from_utf8(row).unwrap())?;
-        }
-        write!(f, "}}\n")?;
-        Ok(())
-    }
-}
-
-impl Index<Pos> for Table {
-    type Output = u8;
-
-    fn index(&self, pos: Pos) -> &Self::Output {
-        assert!(self.contains_pos(pos));
-        &self.cells[pos.r * self.cols + pos.c]
-    }
-}
-
-impl IndexMut<Pos> for Table {
-    fn index_mut(&mut self, pos: Pos) -> &mut Self::Output {
-        assert!(pos.r < self.rows);
-        assert!(pos.c < self.cols);
-        &mut self.cells[pos.r * self.cols + pos.c]
-    }
-}
-
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
-struct Pos {
-    r: usize,
-    c: usize,
 }
 
 fn read_input_from_stdin() -> Table {
