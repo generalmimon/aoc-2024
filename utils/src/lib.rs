@@ -37,25 +37,21 @@ impl Table {
         let mut cells = vec![];
         let mut line = vec![];
         rdr.read_until(b'\n', &mut line).unwrap();
-        if line.last().map_or(false, |&x| x == b'\n') {
+        if line.ends_with(&[b'\n']) {
             line.pop();
         }
         let cols = line.len();
         cells.append(&mut line);
 
-        loop {
-            rdr.read_until(b'\n', &mut line).unwrap();
-            if line.is_empty() {
-                break;
-            }
-            if line.last().map_or(false, |&x| x == b'\n') {
+        while rdr.read_until(b'\n', &mut line).unwrap() > 0 {
+            if line.ends_with(&[b'\n']) {
                 line.pop();
             }
             assert_eq!(line.len(), cols);
             cells.append(&mut line);
         }
 
-        Table::new(cols, cells)
+        Self::new(cols, cells)
     }
 
     pub fn all_positions(&self) -> impl Iterator<Item = Pos> + use<'_> {
