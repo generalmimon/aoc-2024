@@ -11,6 +11,15 @@ pub struct Pos {
     c: usize,
 }
 
+impl Pos {
+    pub fn diff(&self, other: &Self) -> (isize, isize) {
+        (
+            isize::try_from(self.r).unwrap() - isize::try_from(other.r).unwrap(),
+            isize::try_from(self.c).unwrap() - isize::try_from(other.c).unwrap(),
+        )
+    }
+}
+
 #[derive(Clone)]
 pub struct Table {
     rows: usize,
